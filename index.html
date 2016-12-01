@@ -24,7 +24,6 @@
     <input type="button" id="btnCrop"  class="Btnsty_peyton" value="预览">
     <input type="button" id="btnZoomIn" class="Btnsty_peyton" value="+"  >
     <input type="button" id="btnZoomOut" class="Btnsty_peyton" value="-" >
-    <input type="submit" class="Btnsty_peyton" value="上传" id="submitimage"/>
   </div>
   <div class="cropped"></div>
 </div>
@@ -74,31 +73,6 @@ $(window).load(function() {
 		},100);
 	})
 });
-$('#submit').click(function(){
-	var admin='<?php
-			if(!isset($_SESSION['admin'])){
-				echo 0;
-			}else{
-				echo $_SESSION['admin'];
-			}
-		?>';
-//		点击时判断用户是否已登录，如果没有登陆执行代码
-		if(admin==0){
-			if(confirm('你尚未登陆，请登录后留言，点确定跳转至登陆界面，取消留在本在页面')){
-				window.location='www.baidu.com'
-			}else{
-				return;
-			}
-		}
-	var img = cropper.getDataURL();
-	alert(1)
-	$.ajax({
-		type:"post",
-		url:"imagesubmit.php",
-		data:{Img:img},
-		dataType:JSON,
-	});
-})
 </script>
 
 </div>
