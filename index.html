@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>上传头像</title>
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+<body>
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script> 
+<script type="text/javascript" src="js/cropbox.js"></script>
+<div class="container">
+  <div class="imageBox">
+    <div class="thumbBox"></div>
+    <div class="spinner" style="display: none">Loading...</div>
+  </div>
+  <div class="action"> 
+    <!-- <input type="file" id="file" style=" width: 200px">-->
+    <div class="new-contentarea tc"> 
+    	<a href="javascript:void(0)" class="upload-img">
+      	<label for="upload-file">选择文件</label>
+      </a>
+      <input type="file" class="" name="upload-file" id="upload-file" />
+    </div>
+    <input type="button" id="btnCrop"  class="Btnsty_peyton" value="预览">
+    <input type="button" id="btnZoomIn" class="Btnsty_peyton" value="+"  >
+    <input type="button" id="btnZoomOut" class="Btnsty_peyton" value="-" >
+    <input type="submit" class="Btnsty_peyton" value="上传" id="submitimage"/>
+  </div>
+  <div class="cropped"></div>
+</div>
+<script type="text/javascript">
+$(window).load(function() {
+	//设置默认头像为images/avatar.png	
+	var options =
+	{
+		thumbBox: '.thumbBox',
+		spinner: '.spinner',
+		imgSrc: 'images/avatar.png'
+	}
+	var cropper = $('.imageBox').cropbox(options);
+	//选择文件则打开相应的文件
+	$('#upload-file').on('change', function(){
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			options.imgSrc = e.target.result;
+			cropper = $('.imageBox').cropbox(options);
+		}
+		reader.readAsDataURL(this.files[0]);
+//		this.files = [];
+		setTimeout(function(){
+			$('#btnCrop').click();
+		},200);	
+	})
+	//点击预览时，生成三张预览小图，并读取数据
+	$('#btnCrop').on('click', function(){
+		var img = cropper.getDataURL();
+		$('.cropped').html('');
+		$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:64px;margin-top:4px;box-shadow:0px 0px 12px #7E7E7E;" ><p>64px*64px</p>');
+		$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:128px;margin-top:4px;box-shadow:0px 0px 12px #7E7E7E;"><p>128px*128px</p>');
+		$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:180px;margin-top:4px;box-shadow:0px 0px 12px #7E7E7E;"><p>180px*180px</p>');
+	})
+	//点击缩小时缩小
+	$('#btnZoomIn').on('click', function(){
+		cropper.zoomIn();
+		setTimeout(function(){
+			$('#btnCrop').click();
+		},100);
+	})
+	//点击放大时放大
+	$('#btnZoomOut').on('click', function(){
+		cropper.zoomOut();
+		setTimeout(function(){
+			$('#btnCrop').click();
+		},100);
+	})
+});
+$('#submit').click(function(){
+	var admin='<?php
+			if(!isset($_SESSION['admin'])){
+				echo 0;
+			}else{
+				echo $_SESSION['admin'];
+			}
+		?>';
+//		点击时判断用户是否已登录，如果没有登陆执行代码
+		if(admin==0){
+			if(confirm('你尚未登陆，请登录后留言，点确定跳转至登陆界面，取消留在本在页面')){
+				window.location='www.baidu.com'
+			}else{
+				return;
+			}
+		}
+	var img = cropper.getDataURL();
+	alert(1)
+	$.ajax({
+		type:"post",
+		url:"imagesubmit.php",
+		data:{Img:img},
+		dataType:JSON,
+	});
+})
+</script>
+
+</div>
+</body>
+</html>
